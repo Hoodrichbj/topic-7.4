@@ -1,9 +1,6 @@
-package com.gcu.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,47 +20,39 @@ import jakarta.validation.Valid;
 @RequestMapping("/login")
 public class LoginController {
 
-    // Logger to track activity within this controller
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+	@Autowired
+	private OrdersBusinessServiceInterface service;
+	@Autowired
+	private SecurityBusinessService security;
+	
+	@GetMapping("/")
+	public String display(Model model) {
+		// Display Login Form View
+		model.addAttribute("title", "Login Form");
+		model.addAttribute("loginModel", new LoginModel());
+		return "login";
+	}
 
-    @Autowired
-    private OrdersBusinessServiceInterface service;
+	@PostMapping("/doLogin")
+	public String doLogin(@Valid LoginModel loginModel, BindingResult bindingResult, Model model)
+	{
+		// Call to the test() method
+		service.test();		
+		// Call to the authenticate method
+		security.authenticate("Pavle", "Pass");
+	    // Check for validation errors
+	    if (bindingResult.hasErrors())
+	    {
+	        model.addAttribute("title", "Login Form");
+	        return "login";
+	    }
 
-    @Autowired
-    private SecurityBusinessService security;
+	    // Call the getOrders() method
+	    List<OrderModel> orders = service.getOrders();
+	    // Display the Orders View
+	    model.addAttribute("title", "My Orders");
+	    model.addAttribute("orders", orders);
+	    return "orders";
+	}
 
-    // ✅ GET method to display the login form — now works for both /login and /login/
-    @GetMapping({"", "/"})
-    public String display(Model model) {
-        logger.info("Displaying the login form");
-        model.addAttribute("title", "Login Form");
-        model.addAttribute("loginModel", new LoginModel());
-        return "login";
-    }
-
-    // POST method to process the login form
-    @PostMapping("/doLogin")
-    public String doLogin(@Valid LoginModel loginModel, BindingResult bindingResult, Model model) {
-        logger.debug("Attempting to log in user: {}", loginModel.getUsername());
-
-        // Call to the authenticate method
-        security.authenticate(loginModel.getUsername(), loginModel.getPassword());
-        logger.debug("Authentication attempted for user: {}", loginModel.getUsername());
-
-        // Check for validation errors
-        if (bindingResult.hasErrors()) {
-            logger.error("Validation errors present during login attempt for user: {}", loginModel.getUsername());
-            model.addAttribute("title", "Login Form");
-            return "login";
-        }
-
-        // Call the getOrders() method
-        List<OrderModel> orders = service.getOrders();
-        logger.info("Login successful, fetching orders for user: {}", loginModel.getUsername());
-
-        // Display the Orders View
-        model.addAttribute("title", "My Orders");
-        model.addAttribute("orders", orders);
-        return "orders";
-    }
 }
