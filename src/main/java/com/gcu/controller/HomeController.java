@@ -8,7 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String redirectToLogin() {
-        // Redirects anyone who visits the root of the site to the login form
-        return "redirect:/login/";
+        return "redirect:/login"; // 
     }
 }
