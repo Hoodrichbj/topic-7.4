@@ -12,7 +12,7 @@ import com.gcu.business.OrdersBusinessServiceInterface;
 @ComponentScan("com.gcu")
 public class SpringConfig {
 
-    //@Bean(name = "ordersBusinessService", initMethod = "init", destroyMethod = "destroy")
+    @Bean(name = "ordersBusinessService", initMethod = "init", destroyMethod = "destroy")
     @Scope("session")
     public OrdersBusinessServiceInterface getOrdersBusiness() {
         return new OrdersBusinessService();
