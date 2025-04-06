@@ -28,14 +28,14 @@ public class LoginController {
 
     @Autowired
     private OrdersBusinessServiceInterface service;
+
     @Autowired
     private SecurityBusinessService security;
-    
-    // GET method to display the login form
-    @GetMapping("/")
+
+    // ✅ GET method to display the login form — now works for both /login and /login/
+    @GetMapping({"", "/"})
     public String display(Model model) {
-        // Display Login Form View
-        logger.info("Displaying the login form");  // Log that the login form is being displayed
+        logger.info("Displaying the login form");
         model.addAttribute("title", "Login Form");
         model.addAttribute("loginModel", new LoginModel());
         return "login";
@@ -44,22 +44,22 @@ public class LoginController {
     // POST method to process the login form
     @PostMapping("/doLogin")
     public String doLogin(@Valid LoginModel loginModel, BindingResult bindingResult, Model model) {
-        logger.debug("Attempting to log in user: {}", loginModel.getUsername());  // Log attempt to log in with user details
+        logger.debug("Attempting to log in user: {}", loginModel.getUsername());
 
         // Call to the authenticate method
         security.authenticate(loginModel.getUsername(), loginModel.getPassword());
-        logger.debug("Authentication attempted for user: {}", loginModel.getUsername());  // Log authentication attempt
+        logger.debug("Authentication attempted for user: {}", loginModel.getUsername());
 
         // Check for validation errors
         if (bindingResult.hasErrors()) {
-            logger.error("Validation errors present during login attempt for user: {}", loginModel.getUsername());  // Log validation errors
+            logger.error("Validation errors present during login attempt for user: {}", loginModel.getUsername());
             model.addAttribute("title", "Login Form");
             return "login";
         }
 
         // Call the getOrders() method
         List<OrderModel> orders = service.getOrders();
-        logger.info("Login successful, fetching orders for user: {}", loginModel.getUsername());  // Log successful login and order fetching
+        logger.info("Login successful, fetching orders for user: {}", loginModel.getUsername());
 
         // Display the Orders View
         model.addAttribute("title", "My Orders");
