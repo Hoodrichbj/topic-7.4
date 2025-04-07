@@ -12,7 +12,7 @@ public class SecurityBusinessService {
     public boolean authenticate(String name, String password) {
         // Log the authentication attempt
         logger.info("Authentication attempt for user: {}", name);
-        System.out.println("-----Hello from the SecurityBusinessService--------");
+        System.out.println("Hello from the SecurityBusinessService!");
         return true; // Assuming the authentication always returns true for simplicity
     }
 }
